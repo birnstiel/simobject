@@ -1,4 +1,3 @@
-from .updater import Updater
 from .quantity import Quantity
 
 
@@ -27,11 +26,14 @@ class Simulation(object):
 
     def __setattr__(self, key, value):
         if isinstance(value, Quantity):
-            self.addQuantity(key, value, info=key)
+            self.addQuantity(key, value, info=value.info or key)
         else:
-            raise TypeError(
-                "attributes assigned to simulation must be of type <Quantity>"
-            )
+            if hasattr(self, key):
+                super().__setattr__(key, value)
+            else:
+                raise TypeError(
+                    "attributes assigned to simulation must be of type Quantity"
+                )
 
     def addQuantity(self, key, value, info=None, updater=None, systoler=None, diastoler=None, constant=False):
         """
@@ -64,13 +66,50 @@ class Simulation(object):
 
         self._quantities[key] = q
 
+    def update(self):
+        "calls the systole for all quantities, then the update for all quantities, then diastole"
+        for key in self._systole_order:
+            getattr(self, key).systole()
+        for key in self._update_order:
+            getattr(self, key).update()
+        for key in self._diastole_order:
+            getattr(self, key).diastole()
+
+    @property
+    def update_order(self):
+        "the order in which the quantity-updates are called"
+        return self._update_order
+
+    @update_order.setter
+    def update_order(self, value):
+        self._check_list(value)
+        self._update_order = value
+
     @property
     def systole_order(self):
         return self._systole_order
 
     @systole_order.setter
     def systole_order(self, value):
+        self._check_list(value)
         self._systole_order = value
+
+    @property
+    def diastole_order(self):
+        return self._diastole_order
+
+    @diastole_order.setter
+    def diastole_order(self, value):
+        self._check_list(value)
+        self._diastole_order = value
+
+    @staticmethod
+    def _check_list(value):
+        if not isinstance(value, list):
+            raise TypeError('input must be  a list')
+        for val in value:
+            if not isinstance(val, str):
+                raise TypeError('not a str: ' + str(val))
 
     # to make tab completion work
 

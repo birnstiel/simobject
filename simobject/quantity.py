@@ -122,10 +122,20 @@ class Quantity(np.ndarray):
             raise TypeError("This Quantity is constant.")
         self.setfield(value, self.dtype)
 
+    def systole(self):
+        "call the Systole updater"
+        if self._systoler is not None:
+            self._systoler.update(self)
+
     def update(self):
         "call the Updater to do the update"
         if self._updater is not None:
             self.updater.update(self)
+
+    def diastole(self):
+        "call the Diastole updater"
+        if self._diastoler is not None:
+            self._diastoler.update(self)
 
     def _constructupdater(self, value):
         """create an Updater object from `value`.
