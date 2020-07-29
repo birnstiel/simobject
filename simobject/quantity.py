@@ -1,24 +1,6 @@
 import numpy as np
 
-
-class Updater:
-    """
-    An update object that updates the field that it is attached to.
-
-    Keywords:
-    ---------
-
-    owner : object
-        the owner (e.g. simulation) that this Updater is attached to.
-
-    """
-
-    def __init__(self, owner=None, func=None):
-        self.func = func
-        self.owner = owner
-
-    def update(self):
-        self.func(self.owner)
+from .updater import Updater
 
 
 class Quantity(np.ndarray):
@@ -65,6 +47,9 @@ class Quantity(np.ndarray):
 
     diastoler : obj
         Updater object that will be used in the diastole (after all updates)
+
+    constant : bool
+        if constant, then the value cannot be changed
     """
 
     def __new__(
@@ -75,6 +60,7 @@ class Quantity(np.ndarray):
         updater=None,
         systoler=None,
         diastoler=None,
+        constant=None,
         **kwargs,
     ):
 
@@ -87,6 +73,7 @@ class Quantity(np.ndarray):
         if isinstance(input_array, Quantity):
             obj.info = input_array.info
             obj.owner = input_array.owner
+            obj._constant = input_array._constant
 
             # here we call the setter in order to link them to self
 
@@ -99,6 +86,10 @@ class Quantity(np.ndarray):
 
         obj.info = info or obj.info
         obj.owner = owner or obj.owner
+
+        if constant is not None:
+            obj._constant = constant
+
         obj.updater = updater or obj.updater
         obj.systoler = systoler or obj.systoler
         obj.diastoler = diastoler or obj._diastoler
@@ -113,6 +104,7 @@ class Quantity(np.ndarray):
 
         self.info = getattr(obj, "info", None)
         self.owner = getattr(obj, "owner", None)
+        self._constant = getattr(obj, "_constant", False)
         self._updater = getattr(obj, "_updater", None)
         self._systoler = getattr(obj, "_systoler", None)
         self._diastoler = getattr(obj, "_diastoler", None)
@@ -120,37 +112,43 @@ class Quantity(np.ndarray):
     def __repr__(self):
         rep = super().__repr__()
         if self.info is not None:
-            rep = rep.replace(__class__.__name__, f"{self.info}\n")
+            rep = ("Constant " if self._constant else "") + \
+                rep.replace(__class__.__name__, f"{self.info}\n")
         return rep
 
     def setvalue(self, value):
         "sets this array to the new value, but keeps its info and owner"
+        if self._constant:
+            raise TypeError("This Quantity is constant.")
         self.setfield(value, self.dtype)
 
     def update(self):
         "call the Updater to do the update"
         if self._updater is not None:
-            self.updater.update()
+            self.updater.update(self)
 
     def _constructupdater(self, value):
-        """create an Updater object from `value` and link to self.
+        """create an Updater object from `value`.
 
         `value` can be:
 
         - `None`, then `None` is returned
-        - an `Updater`, then it is returned, but its owner is updated
+        - an `Updater`, then `value` is just returned
         - a function, then a new Updater is created and returned
         """
         if isinstance(value, Updater):
-            value.owner = self
             return value
         elif hasattr(value, "__call__"):
-            return Updater(func=value, owner=self)
+            return Updater(func=value)
         elif value is None:
             return None
         else:
             raise TypeError(
                 "<value> must be None, a function, or an Updater instance")
+
+    @property
+    def constant(self):
+        return self._constant
 
     @property
     def updater(self):
@@ -178,74 +176,3 @@ class Quantity(np.ndarray):
     def diastoler(self, value):
         updtr = self._constructupdater(value)
         self._diastoler = updtr
-
-
-class Simulation(object):
-
-    # we want to only store quantities in _data
-
-    __slots__ = ["_quantities", "_systole_order",
-                 "_update_order", "_diastole_order"]
-
-    def __init__(self):
-
-        # we call the method from super because we overwrite the own __setattr__
-
-        super().__setattr__("_quantities", {})
-        super().__setattr__("_systole_order", [])
-        super().__setattr__("_update_order", [])
-        super().__setattr__("_diastole_order", [])
-
-    # this is how one gets an attribute
-
-    def __getattr__(self, key):
-        return self._quantities[key]
-
-    # this is how to set an 'attribute' that internally we store in _quantities
-
-    def __setattr__(self, key, value):
-        if isinstance(value, Quantity):
-            self.addQuantity(key, value, info=key)
-        else:
-            raise TypeError(
-                "attributes assigned to simulation must be of type <Quantity>"
-            )
-
-    def addQuantity(self, key, value, info=None, updater=None, systoler=None, diastoler=None):
-        """
-        adds `value` as apparent attribute under the name `key`.
-
-        `value` will be casted to type Quantity and it's owner will be set to
-        this simulation.
-
-        - If `info` is None, then `key` is also set as the `info` attribute of the
-          Quantity unless that one already had that attribute to begin with, else `key`
-          is used instead.
-
-        - if `value` has already updater, systoler, or diastoler, those will be inherited, but their
-          owner will be changed.
-
-        - if `updater`, `systoler`, and/or `diastoler` are given, those always override the
-          ones that might already be set in `value`.
-
-        """
-        q = Quantity(value, owner=self)
-
-        q.info = info or q.info or key
-
-        # this actually calls the setter and getter to make sure
-        # the updater is linked correctly
-
-        q.updater = updater or q.updater
-        q.systoler = systoler or q.systoler
-        q.diastoler = diastoler or q.diastoler
-
-        self._quantities[key] = q
-
-    def getSystoleOrder(self):
-        return self._systole_order
-
-    # to make tab completion work
-
-    def __dir__(self):
-        return sorted(set(super().__dir__() + list(self._quantities.keys())))

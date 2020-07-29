@@ -1,0 +1,3 @@
+# Organization Helper
+
+helps with organizing participants list, grades, sending emails, ...
