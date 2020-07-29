@@ -82,7 +82,7 @@ class Simulation(object):
 
         for key in sorted(self._quantities.keys(), key=str.casefold):
 
-            val = self.__quantities[key]
+            val = self._quantities[key]
 
             if key.startswith("_"):
                 continue
