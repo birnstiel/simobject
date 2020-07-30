@@ -1,9 +1,9 @@
+from .heartbeat_object import HeartbeatObject
+
 import numpy as np
 
-from .updater import Updater
 
-
-class Quantity(np.ndarray):
+class Quantity(np.ndarray, HeartbeatObject):
     """numpy.ndarray that also stores its owner and a info string.
 
     The input_array and extra keywords are passed to np.asarray.
@@ -122,67 +122,6 @@ class Quantity(np.ndarray):
             raise TypeError("This Quantity is constant.")
         self.setfield(value, self.dtype)
 
-    def systole(self):
-        "call the Systole updater"
-        if self._systoler is not None:
-            self._systoler.update(self)
-
-    def update(self):
-        "call the Updater to do the update"
-        if self._updater is not None:
-            self.updater.update(self)
-
-    def diastole(self):
-        "call the Diastole updater"
-        if self._diastoler is not None:
-            self._diastoler.update(self)
-
-    def _constructupdater(self, value):
-        """create an Updater object from `value`.
-
-        `value` can be:
-
-        - `None`, then `None` is returned
-        - an `Updater`, then `value` is just returned
-        - a function, then a new Updater is created and returned
-        """
-        if isinstance(value, Updater):
-            return value
-        elif hasattr(value, "__call__"):
-            return Updater(func=value)
-        elif value is None:
-            return None
-        else:
-            raise TypeError(
-                "<value> must be None, a function, or an Updater instance")
-
     @property
     def constant(self):
         return self._constant
-
-    @property
-    def updater(self):
-        return self._updater
-
-    @property
-    def systoler(self):
-        return self._systoler
-
-    @property
-    def diastoler(self):
-        return self._diastoler
-
-    @updater.setter
-    def updater(self, value):
-        updtr = self._constructupdater(value)
-        self._updater = updtr
-
-    @systoler.setter
-    def systoler(self, value):
-        updtr = self._constructupdater(value)
-        self._systoler = updtr
-
-    @diastoler.setter
-    def diastoler(self, value):
-        updtr = self._constructupdater(value)
-        self._diastoler = updtr
