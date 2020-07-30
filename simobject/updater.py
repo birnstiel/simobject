@@ -39,4 +39,4 @@ class DataUpdater(Updater):
                     (sim.data[key], getattr(sim, key))
                 )
             else:
-                sim.data[key] = getattr(sim, key)[None, :]
+                sim.data[key] = getattr(sim, key)[None, ...]
