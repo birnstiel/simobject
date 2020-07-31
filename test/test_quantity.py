@@ -1,5 +1,8 @@
 from simobject import Quantity, Updater, Simulation
 
+import numpy as np
+import pytest
+
 
 def fct(field):
     field.setvalue(field * 2)
@@ -13,6 +16,16 @@ def get_defaults():
     a = Quantity(5, info='a', updater=u, constant=True, owner=sim)
     b = Quantity(a)
     return a, b
+
+
+def test_quantity_updates():
+    "test if a quantity updates with above function"
+    a = Quantity(5, info='a', updater=u)
+
+    assert a == 5
+    a.update()
+
+    assert a == 10
 
 
 def test_quantity_from_quantity_is_different():
@@ -77,3 +90,31 @@ def test_quantity_default_non_constant():
     "By default a Quantity is not constant"
     e = Quantity(5)
     assert e.constant is False
+
+
+def test_quantity_setvalue():
+    "run some tests on setvalue"
+
+    a = Quantity(5)
+    a.setvalue(6)
+    assert a == 6
+
+    a = Quantity([1., 2., 3.])
+    a.setvalue(5)
+    assert np.all(a == 5)
+
+    a = Quantity(0, constant=True)
+    with pytest.raises(TypeError):
+        a.setvalue(5)
+
+
+def test_quantity_repr():
+    "check the string representation"
+    a = Quantity([5])
+    assert a.__repr__() == 'Quantity([5])'
+
+    a = Quantity([1, 2, 3], info='density')
+    assert a.__repr__() == 'density\n([1, 2, 3])'
+
+    a = Quantity(0, constant=True)
+    assert a.__repr__() == 'Constant Quantity(0)'

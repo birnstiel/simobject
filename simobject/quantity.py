@@ -99,8 +99,6 @@ class Quantity(np.ndarray, HeartbeatObject):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None:
-            return
 
         self.info = getattr(obj, "info", None)
         self.owner = getattr(obj, "owner", None)
@@ -111,9 +109,10 @@ class Quantity(np.ndarray, HeartbeatObject):
 
     def __repr__(self):
         rep = super().__repr__()
+        if self._constant:
+            rep = "Constant " + rep
         if self.info is not None:
-            rep = ("Constant " if self._constant else "") + \
-                rep.replace(__class__.__name__, f"{self.info}\n")
+            rep = rep.replace(__class__.__name__, f"{self.info}\n")
         return rep
 
     def setvalue(self, value):

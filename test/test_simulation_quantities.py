@@ -15,6 +15,41 @@ def get_defaults():
     return sim, a, b, u
 
 
+def test_simulation_update():
+    sim, a, b, u = get_defaults()
+
+    # test if adding a constant quantity keeps it constant
+    sim.addQuantity('a', a)
+
+    assert sim.a.constant
+
+    # test if that can be overwritten
+
+    sim.addQuantity('a', a, constant=False)
+
+    assert not sim.a.constant
+
+    assert a == 5
+    sim.update()
+    assert a == 10
+
+
+def test_assign_quantity():
+    "check if assigning quantities works as desired"
+
+    sim = Simulation()
+    a = Quantity(5)
+    b = Quantity(6)
+    sim.a = a
+    assert sim.a == a
+
+    sim.a = b
+    assert sim.a == b
+
+    sim.a = 7
+    assert sim.a == 7
+
+
 def test_sim_add_quantity_is_different():
     "We added the a quantity to the simulation, should now be different object"
     sim, a, b, u = get_defaults()

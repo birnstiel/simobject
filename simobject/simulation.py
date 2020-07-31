@@ -52,7 +52,7 @@ class Simulation(HeartbeatObject):
         else:
             super().__setattr__(key, value)
 
-    def addQuantity(self, key, value, info=None, updater=None, systoler=None, diastoler=None, constant=False):
+    def addQuantity(self, key, value, info=None, updater=None, systoler=None, diastoler=None, constant=None):
         """
         adds `value` as apparent attribute under the name `key`.
 
@@ -72,7 +72,9 @@ class Simulation(HeartbeatObject):
         q = Quantity(value, owner=self)
 
         q.info = info or q.info or key
-        q._constant = constant or q._constant
+
+        if constant is not None:
+            q._constant = constant
 
         # this actually calls the setter and getter to make sure
         # the updater is linked correctly
