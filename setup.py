@@ -7,14 +7,25 @@ import pathlib
 PACKAGENAME = 'simobject'
 
 # the directory where this setup.py resides
-HERE = pathlib.Path(__file__).parent
+HERE = pathlib.Path(__file__).absolute().parent
+
+
+def read_version():
+    with (HERE / PACKAGENAME / '__init__.py').open() as fid:
+        for line in fid:
+            if line.startswith('__version__'):
+                delim = '"' if '"' in line else "'"
+                return line.split(delim)[1]
+        else:
+            raise RuntimeError("Unable to find version string.")
+
 
 if __name__ == "__main__":
 
     setup(
         name=PACKAGENAME,
         description='simple basic framework for a simulation',
-        version='0.0.1',
+        version=read_version(),
         long_description=(HERE / "Readme.md").read_text(),
         long_description_content_type='text/markdown',
         url='til-birnstiel.de',
