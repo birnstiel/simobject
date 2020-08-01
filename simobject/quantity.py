@@ -25,7 +25,7 @@ class Quantity(np.ndarray, HeartbeatObject):
     True
 
 
-    Arguments:
+    Parameters
     ----------
 
     input_array : scalar | list | array
@@ -116,7 +116,7 @@ class Quantity(np.ndarray, HeartbeatObject):
         return rep
 
     def setvalue(self, value):
-        "sets this array to the new value, but keeps its info and owner"
+        """sets this array to the new value, but keeps its info and owner"""
         if self._constant:
             raise TypeError("This Quantity is constant.")
         self.setfield(value, self.dtype)
