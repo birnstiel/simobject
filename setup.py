@@ -28,7 +28,7 @@ if __name__ == "__main__":
         version=read_version(),
         long_description=(HERE / "Readme.md").read_text(),
         long_description_content_type='text/markdown',
-        url='https://www.til-birnstiel.de',
+        url='https://github.com/birnstiel/simobject',
         author='Til Birnstiel',
         author_email='til.birnstiel@lmu.de',
         license='GPLv3',
