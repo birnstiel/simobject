@@ -3,3 +3,4 @@ pytest
 sphinx>=3.0
 nbsphinx
 numpydoc
+simobject
