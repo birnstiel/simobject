@@ -1,9 +1,11 @@
-[![codecov](https://codecov.io/gh/birnstiel/simobject/branch/master/graph/badge.svg)](https://codecov.io/gh/birnstiel/simobject)
+.. image:: https://codecov.io/gh/birnstiel/simobject/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/birnstiel/simobject
 
 
-# Simobject
+Readme
+======
 
-General framework for a simultation:
+General framework for a simulation:
 
 - `Simulation` object with `Quantities` that can be updated in a specified order
 - `Quantities` objects that behave like `numpy.ndarrays` but can be set to be constant, contain information, and have functions to update them.
