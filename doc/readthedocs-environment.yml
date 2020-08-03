@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+dependencies:
+  - python>=3
+  - sphinx>=1.6
+  - numpy
+  - pip:
+    - nbsphinx
+    - numpydoc
