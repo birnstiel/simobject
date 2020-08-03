@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/birnstiel/simobject/branch/master/graph/badge.svg)](https://codecov.io/gh/birnstiel/simobject)
+
+
 # Simobject
 
 General framework for a simultation:
