@@ -3,6 +3,8 @@ Welcome to simobject's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
+
 
 Simulation
 ----------
@@ -24,8 +26,10 @@ Quantity
 .. autoclass:: simobject.Quantity
    :members:
 
+
+
 Indices and tables
-------------------
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`

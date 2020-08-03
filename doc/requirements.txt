@@ -1,5 +1,5 @@
 numpy
 pytest
-sphinx>=2.4
+sphinx>=3.0
 nbsphinx
 numpydoc
