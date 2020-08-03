@@ -6,6 +6,7 @@ Welcome to simobject's documentation!
    :caption: Contents
    
    readme
+   example
    simobject
 
 .. include:: readme.rst

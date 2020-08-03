@@ -5,3 +5,6 @@ nbsphinx
 numpydoc
 recommonmark
 simobject
+nbconvert
+ipykernel
+jupyter
