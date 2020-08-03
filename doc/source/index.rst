@@ -3,8 +3,6 @@ Welcome to simobject's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
-
 
 Simulation
 ----------
