@@ -105,3 +105,24 @@ def test_assigning_faulty_list():
 
     with pytest.raises(TypeError):
         sim.update_order = 5
+
+
+def test_several_steps():
+    sim = Simulation()
+    sim.addQuantity('time', Quantity(0, 'simulation time'))
+    sim.addQuantity('dt', Quantity(1, 'time step'))
+
+    def timeupdate(time):
+        time += time.owner.dt
+
+    sim.time.updater = timeupdate
+
+    sim.diastoler = DataUpdater(['time'])
+
+    sim.update()
+    sim.update()
+    sim.update()
+    sim.update()
+
+    assert sim.time == 4
+    assert np.all(sim.data['time'][:, 0] == [1, 2, 3, 4])
