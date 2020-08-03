@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'numpydoc',
     'nbsphinx',
+    'recommonmark',  # for markdown
 ]
 
 autodoc_default_options = {

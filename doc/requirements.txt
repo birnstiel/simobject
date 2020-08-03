@@ -1,0 +1,5 @@
+numpy
+pytest
+sphinx>=1.6
+nbsphinx
+numpydoc
