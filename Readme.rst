@@ -1,6 +1,13 @@
 .. image:: https://codecov.io/gh/birnstiel/simobject/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/birnstiel/simobject
 
+.. image:: https://travis-ci.org/birnstiel/simobject.svg?branch=master
+    :target: https://travis-ci.org/birnstiel/simobject
+
+.. image:: https://readthedocs.org/projects/simobject/badge/?version=latest
+:target: https://simobject.readthedocs.io/en/latest/?badge=latest
+:alt: Documentation Status
+
 
 Readme
 ======
