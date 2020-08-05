@@ -52,24 +52,36 @@ class Simulation(HeartbeatObject):
         else:
             super().__setattr__(key, value)
 
-    def addQuantity(self, key, value, info=None, updater=None, systoler=None, diastoler=None, constant=None):
+    def addQuantity(self, key, value, info=None, updater=None, systoler=None, diastoler=None, constant=None, copy=True):
         """
         adds `value` as apparent attribute under the name `key`.
 
-        `value` will be casted to type Quantity and it's owner will be updated to
-        this simulation.
+        `value` will be casted to type Quantity. If a numpy ndarray is
+        passed, a new memory buffer will be created.
 
-        - If `info` is None, then `key` is also set as the `info` attribute of the
+        If a quantity is passed,
+
+        - ... a new Quantity object will be created with the same attributes.
+        - ... and if `value` has already updater, systoler, or diastoler, those will be inherited
+        - ... and if `updater`, `systoler`, and/or `diastoler` are given, those always override the
+          ones that might already be set in `value`.
+        - ... and `info` is None, then `key` is also set as the `info` attribute of the
           Quantity unless that one already had that attribute to begin with, else `key`
           is used instead.
 
-        - if `value` has already updater, systoler, or diastoler, those will be inherited
+        Parameters:
+        -----------
 
-        - if `updater`, `systoler`, and/or `diastoler` are given, those always override the
-          ones that might already be set in `value`.
+        copy : bool, optional, defaults to True
+            by default a copy of the input value is created. If set to
+            False, the same memory (for ndarrays) or object (for Quantities)
+            are used.
 
         """
-        q = Quantity(value, owner=self)
+        if isinstance(value, Quantity) and copy is False:
+            q = value
+        else:
+            q = Quantity(value, owner=self, copy=copy)
 
         q.info = info or q.info or key
 

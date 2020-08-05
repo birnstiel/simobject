@@ -1,3 +1,4 @@
+import numpy as np
 from simobject import Quantity, Updater, Simulation
 
 
@@ -29,9 +30,9 @@ def test_simulation_update():
 
     assert not sim.a.constant
 
-    assert a == 5
+    assert sim.a == 5
     sim.update()
-    assert a == 10
+    assert sim.a == 10
 
 
 def test_assign_quantity():
@@ -50,10 +51,45 @@ def test_assign_quantity():
     assert sim.a == 7
 
 
-def test_sim_add_quantity_is_different():
-    "We added the a quantity to the simulation, should now be different object"
-    sim, a, b, u = get_defaults()
+def test_sim_add_quantity():
+    "test adding quantities or numpy arrays to the simulation"
+
+    sim = Simulation()
+    a = np.arange(3)
+    q = Quantity(np.ones(3))
+
+    # 1. adding a quantity makes a new object
+
+    sim.addQuantity('q', q)
+    assert sim.q is not q
+
+    # 2. adding a quantity can be forced to keep that object
+
+    sim.addQuantity('q', q, copy=False)
+    assert sim.q is q
+
+    # 3. adding a numpy array will lead to a new memory buffer
+
+    sim.addQuantity('a', a)
     assert id(sim.a) != id(a)
+    assert sim.a.base is not a
+
+    # 4. but that can also be overridden. Note: a new object
+    # is created here (a Quantity from a ndarray), but the memory
+    # is identical, i.e. changes in `a` will be reflected in `sim.a`.
+    # use this with caution!!
+    sim.addQuantity('a', a, copy=False)
+    assert id(sim.a) != id(a)
+    assert sim.a.base is a
+
+
+def test_sim_add_numpy_array():
+    "now we add an array asn specifically copy the memory"
+    sim = Simulation()
+    a = np.arange(3)
+    sim.addQuantity('a', a, copy=False)
+    assert sim.a is not a
+    assert sim.a.base is a
 
 
 def test_sim_add_quantity_overwrite_info():

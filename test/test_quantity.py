@@ -18,6 +18,18 @@ def get_defaults():
     return a, b
 
 
+def test_quantity_copy():
+    "test if the memory is not copied by default, but that we can force it"
+    a = np.arange(3)
+    b = Quantity(a)
+
+    assert b.base is a
+
+    b = Quantity(a, copy=True)
+
+    assert b.base is not a
+
+
 def test_quantity_updates():
     "test if a quantity updates with above function"
     a = Quantity(5, info='a', updater=u)

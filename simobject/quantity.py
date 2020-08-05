@@ -61,12 +61,13 @@ class Quantity(np.ndarray, HeartbeatObject):
         systoler=None,
         diastoler=None,
         constant=None,
+        copy=False,
         **kwargs,
     ):
 
         # We first cast to be our class type
 
-        obj = np.asarray(input_array, **kwargs).view(cls)
+        obj = np.array(input_array, copy=copy, **kwargs).view(cls)
 
         # we copy extra-attributes from our input array
 
