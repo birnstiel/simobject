@@ -3,7 +3,7 @@ from .simulation import Simulation
 from .updater import Updater, DataUpdater
 from .heartbeat_object import HeartbeatObject
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 __all__ = [
     'Quantity',

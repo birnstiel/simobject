@@ -22,17 +22,39 @@ class Updater:
 
 class DataUpdater(Updater):
     """
-    Special updater that keeps track of the changing quantities by
+    Special Updater that keeps track of the changing quantities by
     appending them to a numpy array.
+
+    Parameters:
+    -----------
+    keys : list
+        a list of strings, each one is the name of a simulation attribute to store
+
+    string : str, optional, defaults to None
+        if it is a string, it will be written out at every snapshot and formatted
+        with passing the string object. For example
+
+            string = 'time = {0.time}'
+
+        will access simulation.time.
     """
     keys = []
 
-    def __init__(self, keys, *args, **kwargs):
+    def __init__(self, keys, *args, string=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.keys = list(keys)
+        self.string = string
 
-    def update(self, sim):
-        print('updating data')
+    def print(self, sim):
+        if self.string is not None:
+            print(self.string.format(sim), end='', flush=True)
+
+    def update(self, sim, string=None):
+        if string is not None:
+            self.string = string
+
+        self.print(sim)
+
         for key in self.keys:
             if key in sim.data:
                 sim.data[key] = np.vstack(
